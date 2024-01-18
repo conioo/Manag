@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+//option csharp_namespace = "Server";
+import "test.proto";
+import "google/protobuf/empty.proto";
+//package google.protobuf;
+package proto;
+
+service common{
+	rpc sendFile(FileRequest) returns(FileRequest);
+}
+
+message FileRequest{
+	string fileName = 1;
+	//FileResponse coei = 2;
+}
+
+service WindowsSettings{
+	rpc ChangeWallpaper(WallpaperRequest) returns(google.protobuf.Empty);//napis, zdjecie, wyslac zdjecie
+	//rpc changeMouseSize() returns();
+}
+
+message WallpaperRequest{
+	bytes data = 1;
+}
+
+//service windowsRegister{
+//	rpc setWelcomeMessage() returns();
+//}
+
+//service windowsCommand{
+//	rpc takePhoto() returns();
+//	rpc showErrors() returns();
+//	rpc shutdown() returns();
+////	rpc runProgram() returns();
+//	rpc sendMessage() returns();
+//}
+
+//service info{
+//	rpc getProcesses() returns();
+//}
+
+// The greeting service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply);
+}
+
+service Command {
+  rpc Send (HelloRequest) returns(HelloReply);
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings.
+message HelloReply {
+  string message = 1;
+}
