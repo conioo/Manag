@@ -1,5 +1,5 @@
+using Google.Protobuf;
 using Grpc.Core;
-using Proto;
 
 namespace Server.Services
 {

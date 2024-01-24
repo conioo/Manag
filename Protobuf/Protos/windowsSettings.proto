@@ -1,1 +1,13 @@
-﻿
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+package google.protobuf;
+
+service WindowsSettings{
+	rpc ChangeWallpaper(WallpaperRequest) returns(google.protobuf.Empty);
+	//rpc changeMouseSize() returns();
+}
+
+message WallpaperRequest{
+	string file_name = 1;
+}

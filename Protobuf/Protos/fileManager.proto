@@ -1,0 +1,25 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+package google.protobuf;
+
+service FileManager{
+	rpc SaveFile(FileRequest) returns(google.protobuf.Empty);
+	rpc RemoveFile(RemoveFileRequest) returns(google.protobuf.Empty);
+	rpc GetFiles(google.protobuf.Empty) returns(FilesResponse);
+}
+
+message FileRequest{
+	string filename = 1;
+	bytes content = 2;
+}
+
+message RemoveFileRequest{
+	string filename = 1;
+}
+
+message FilesResponse{
+	repeated string filenames = 1;
+}
+
+//filemanager save --file "s.png"

@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-package protowok;
-
-message FileResponse{
-	int32 as=1;
-}

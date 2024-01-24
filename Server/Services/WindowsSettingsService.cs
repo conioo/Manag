@@ -1,13 +1,18 @@
-﻿using Google.Protobuf.WellKnownTypes;
+﻿using Google.Protobuf;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using Proto;
-using System.IO;
+using Microsoft.Extensions.Configuration;
 using System.Runtime.InteropServices;
 
 namespace Server.Services
 {
     public class WindowsSettingsService: WindowsSettings.WindowsSettingsBase
     {
+        public WindowsSettingsService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         // Importuje funkcję SystemParametersInfo z user32.dll
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
@@ -16,12 +21,12 @@ namespace Server.Services
         private const int SPI_SETDESKWALLPAPER = 0x0014;
         private const int SPIF_UPDATEINIFILE = 0x01;
         private const int SPIF_SENDCHANGE = 0x02;
+        private readonly IConfiguration _configuration;
 
         public override Task<Empty> ChangeWallpaper(WallpaperRequest request, ServerCallContext context)
         {
-            //request.Data
-
-            string path = @"C:\Users\posce\Desktop\logo2.png";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), _configuration.GetSection("Options").GetValue<string>("filesPath"), request.FileName);
+            Console.WriteLine(path);
 
             int result = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
 
@@ -35,7 +40,7 @@ namespace Server.Services
                 Console.WriteLine("Nie udało się zmienić tapety. Sprawdź, czy ścieżka do pliku jest poprawna.");
             }
 
-            return base.ChangeWallpaper(request, context);
+            return Task.FromResult(new Empty());
         }
     }
 }
