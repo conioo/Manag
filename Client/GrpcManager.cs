@@ -1,13 +1,4 @@
-﻿using Google.Protobuf;
-using Grpc.Health.V1;
-using Grpc.Net.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
+﻿using Grpc.Net.Client;
 using static Google.Protobuf.FileManager;
 using static Google.Protobuf.Info;
 using static Google.Protobuf.WindowsSettings;
@@ -75,38 +66,18 @@ namespace Client
 
             var response = InfoClient.CheckHealth(new Google.Protobuf.WellKnownTypes.Empty());
 
-            if(response.Status is false)
+            if (response.Status is false)
             {
                 throw new Exception("invalid connection");
             }
+
+            InfoClient.StartSession(new Google.Protobuf.WellKnownTypes.Empty());
         }
 
         public void Dispose()
         {
+            InfoClient.EndSession(new Google.Protobuf.WellKnownTypes.Empty());
             _channel.Dispose();
         }
     }
-
-
-    //byte[] fileContent = File.ReadAllBytes("logo2.png");
-
-    //var request = new FileRequest
-    //{
-    //    FileName = "logo2.png",
-    //    Content = ByteString.CopyFrom(fileContent)
-    //};
-
-    //await client.SaveFileAsync(request);
-    //await client2.ChangeWallpaperAsync(new WallpaperRequest { FileName = "pob.jfif" });
-
-    //var reply = await client.SayHelloAsync(
-    //                  new HelloRequest { Name = "GreeterClient" });
-    //Console.WriteLine("Greeting: " + reply.Message);
-    //Console.WriteLine("Press any key to exit...");
-
-    //var reply2 = await client2.SendAsync(
-    //                  new HelloRequest { Name = "GreeterClient" });
-    //Console.WriteLine(reply2.Message);
-    //Console.ReadKey();
-
 }

@@ -1,47 +1,47 @@
-﻿using Google.Protobuf;
+﻿using Common.Configuration;
+using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using Microsoft.Extensions.Configuration;
-using System.Runtime.InteropServices;
+using Microsoft.Extensions.Options;
+using Server.Helpers;
+using static Google.Protobuf.WindowsSettings;
 
 namespace Server.Services
 {
-    public class WindowsSettingsService: WindowsSettings.WindowsSettingsBase
+    public class WindowsSettingsService : WindowsSettings.WindowsSettingsBase
     {
-        public WindowsSettingsService(IConfiguration configuration)
+        public WindowsSettingsService(IOptions<ApplicationOptions> options)
         {
-            _configuration = configuration;
+            _appOptions = options.Value;
         }
 
-        // Importuje funkcję SystemParametersInfo z user32.dll
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
-
-        // Definiuje stałe używane w SystemParametersInfo
-        private const int SPI_SETDESKWALLPAPER = 0x0014;
-        private const int SPIF_UPDATEINIFILE = 0x01;
-        private const int SPIF_SENDCHANGE = 0x02;
-        private readonly IConfiguration _configuration;
+        private readonly ApplicationOptions _appOptions;
 
         public override Task<Empty> ChangeWallpaper(WallpaperRequest request, ServerCallContext context)
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), _configuration.GetSection("Options").GetValue<string>("filesPath"), request.FileName);
-            Console.WriteLine(path);
-
-            int result = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
-
-            // Sprawdza, czy operacja się powiodła
-            if (result != 0)
+            try
             {
-                Console.WriteLine("Tapeta zmieniona pomyślnie.");
+                var channel = GrpcHelper.CreateChannel();
+
+                var client = new WindowsSettingsClient(channel);
+
+                client.ChangeWallpaper(request);
             }
-            else
+            catch(RpcException)
             {
-                Console.WriteLine("Nie udało się zmienić tapety. Sprawdź, czy ścieżka do pliku jest poprawna.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new RpcException(new Status(StatusCode.Internal, ex.Message));
             }
 
             return Task.FromResult(new Empty());
         }
+
+        public override Task<Empty> ChangeMouseSize(MouseRequest request, ServerCallContext context)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
-        

@@ -18,6 +18,7 @@ namespace Client.Commands
         {
             _grpcManager = grpcManager;
 
+            this.AddAlias("fm");
             this.AddCommand(addCommand());
             this.AddCommand(removeCommand());
             this.AddCommand(getCommand());
@@ -27,8 +28,10 @@ namespace Client.Commands
         {
             var command = new Command("add", "adding a new file");
 
-            var fileOption = new Option<FileInfo>(name: "--file", description: "path to file") { IsRequired = true };
+            var fileOption = new Option<FileInfo>(name: "--file", description: "path to file") { IsRequired = true};
+            fileOption.AddAlias("-f");
             var filenameOption = new Option<string>(name: "--filename", description: "filename") { };
+            filenameOption.AddAlias("-fn");
 
             command.AddOption(fileOption);
             command.AddOption(filenameOption);
@@ -57,6 +60,7 @@ namespace Client.Commands
             var command = new Command("remove", "removing a file");
 
             var filenameOption = new Option<string>(name: "--filename", description: "filename") { IsRequired = true };
+            filenameOption.AddAlias("-fn");
 
             command.AddOption(filenameOption);
 
@@ -85,15 +89,36 @@ namespace Client.Commands
 
                 var response = await call;
 
-                if(response.Filenames.Count == 0)
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine("audio: ");
+                Console.ResetColor();
+
+                if (response.AudioFilenames.Count == 0)
                 {
                     context.Console.WriteLine("no files found");
-                    return;
+                }
+                else
+                {
+                    foreach (var filename in response.AudioFilenames)
+                    {
+                        context.Console.WriteLine($"{filename}");
+                    }
                 }
 
-                foreach(var filename in response.Filenames)
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("images: ");
+                Console.ResetColor();
+
+                if (response.ImagesFilenames.Count == 0)
                 {
-                    context.Console.WriteLine($"{filename}");
+                    context.Console.WriteLine("no files found");
+                }
+                else
+                {
+                    foreach (var filename in response.ImagesFilenames)
+                    {
+                        context.Console.WriteLine($"{filename}");
+                    }
                 }
             });
 

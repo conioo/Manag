@@ -5,9 +5,13 @@ package google.protobuf;
 
 service WindowsSettings{
 	rpc ChangeWallpaper(WallpaperRequest) returns(google.protobuf.Empty);
-	//rpc changeMouseSize() returns();
+	rpc ChangeMouseSize(MouseRequest) returns(google.protobuf.Empty);
 }
 
 message WallpaperRequest{
-	string file_name = 1;
+	string filename = 1;
+}
+
+message MouseRequest{
+	int32 mouseSize = 1;
 }

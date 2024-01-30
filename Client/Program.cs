@@ -8,6 +8,8 @@ namespace Client
 {
     internal class Program
     {
+        private const int SERVERPORT = 6570;
+
         private static GrpcManager grpcManager;
 
         static void Main(string[] args)
@@ -21,9 +23,8 @@ namespace Client
             while (true)
             {
                 Console.WriteLine("enter ip address:");
-                //var address = Console.ReadLine();
-                var address = "localhost";
-
+                var address = Console.ReadLine();
+                //var address = "localhost";
 
                 if (string.IsNullOrEmpty(address))
                 {
@@ -32,11 +33,13 @@ namespace Client
 
                 try
                 {
-                    grpcManager = new GrpcManager($"https://{address}:7018");
+                    grpcManager = new GrpcManager($"http://{address}:{SERVERPORT}");
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("successfull connected");
+                    Console.ResetColor();
 
                     CommandLoop();
-
-                    Console.WriteLine("successfull connected");
                 }
                 catch (Exception ex)
                 {
@@ -50,7 +53,8 @@ namespace Client
         {
             var rootCommand = new RootCommand("Manag app for trolling")
             {
-                new FileManagerCommand(grpcManager)
+                new FileManagerCommand(grpcManager),
+                new SettingsCommand(grpcManager)
             };
 
             var commandLineBuilder = new CommandLineBuilder(rootCommand);

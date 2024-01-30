@@ -1,8 +1,10 @@
-﻿using Google.Protobuf;
+﻿using Common.Configuration;
+using Common.Helpers;
+using Common.Extensions;
+using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.Extensions.Options;
-using Server.Configuration;
 
 namespace Server.Services
 {
@@ -13,28 +15,33 @@ namespace Server.Services
 
         public FileManagerService(IOptions<ApplicationOptions> appOptions, ILogger<FileManagerService> logger)
         {
-            Console.WriteLine(appOptions.Value.FilesPath);
             _appOptions = appOptions.Value;
             _logger = logger;
         }
 
         public override Task<Empty> SaveFile(FileRequest request, ServerCallContext context)
         {
-            checkPath();
-
-            if (File.Exists(Path.Combine(_appOptions.FilesPath, request.Filename)))
-            {
-                _logger.LogInformation($"file {request.Filename} already exist");
-
-                throw new RpcException(new Status(StatusCode.Internal, $"file {request.Filename} already exist"));
-            }
-
-            byte[] content = request.Content.ToByteArray();
-
             try
             {
-                File.WriteAllBytes(Path.Combine(_appOptions.FilesPath, request.Filename), content);
+                var path = Path.Combine(_appOptions.AppFolder, FileHelper.GetFileType(request.Filename).GetFolderName(_appOptions));
+
+                checkPath(path);
+
+                if (File.Exists(Path.Combine(path, request.Filename)))
+                {
+                    _logger.LogInformation($"file {request.Filename} already exist");
+
+                    throw new RpcException(new Status(StatusCode.Internal, $"file {request.Filename} already exist"));
+                }
+
+                byte[] content = request.Content.ToByteArray();
+
+                File.WriteAllBytes(Path.Combine(path, request.Filename), content);
                 _logger.LogInformation($"successfull created file {request.Filename}");
+            }
+            catch (RpcException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -47,20 +54,26 @@ namespace Server.Services
 
         public override Task<Empty> RemoveFile(RemoveFileRequest request, ServerCallContext context)
         {
-            checkPath();
-
-            if (!File.Exists(Path.Combine(_appOptions.FilesPath, request.Filename)))
-            {
-                _logger.LogInformation($"file {request.Filename} doesn't exist");
-
-                throw new RpcException(new Status(StatusCode.Internal, $"file {request.Filename} doesn't exist"));
-            }
-
             try
             {
-                File.Delete(Path.Combine(_appOptions.FilesPath, request.Filename));
+                var path = Path.Combine(_appOptions.AppFolder, FileHelper.GetFileType(request.Filename).GetFolderName(_appOptions));
+
+                checkPath(path);
+
+                if (!File.Exists(Path.Combine(path, request.Filename)))
+                {
+                    _logger.LogInformation($"file {request.Filename} doesn't exist");
+
+                    throw new RpcException(new Status(StatusCode.Internal, $"file {request.Filename} doesn't exist"));
+                }
+
+                File.Delete(Path.Combine(path, request.Filename));
 
                 _logger.LogInformation($"successfull removed file {request.Filename}");
+            }
+            catch (RpcException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -73,20 +86,32 @@ namespace Server.Services
 
         public override Task<FilesResponse> GetFiles(Empty request, ServerCallContext context)
         {
-            checkPath();
-
             try
             {
-                var files = Directory.GetFiles(_appOptions.FilesPath);
+                var imagePath = Path.Combine(_appOptions.AppFolder, _appOptions.ImagesPath);
+                var audioPath = Path.Combine(_appOptions.AppFolder, _appOptions.AudioPath);
 
-                var filenames = new List<string>();
+                checkPath(imagePath);
+                checkPath(audioPath);
 
-                foreach (var file in files)
+                var imageFiles = Directory.GetFiles(imagePath);
+                var audioFiles = Directory.GetFiles(audioPath);
+
+                var imageFilenames = new List<string>();
+                var audioFilenames = new List<string>();
+
+
+                foreach (var file in imageFiles)
                 {
-                    filenames.Add(Path.GetFileName(file));
+                    imageFilenames.Add(Path.GetFileName(file));
                 }
 
-                var response = new FilesResponse() { Filenames = { filenames } };
+                foreach (var file in audioFiles)
+                {
+                    audioFilenames.Add(Path.GetFileName(file));
+                }
+
+                var response = new FilesResponse() { AudioFilenames = { audioFilenames }, ImagesFilenames = { imageFilenames } };
 
                 return Task.FromResult(response);
             }
@@ -97,14 +122,14 @@ namespace Server.Services
             }
         }
 
-        private void checkPath()
+        private void checkPath(string path)
         {
-            if (!Directory.Exists(_appOptions.FilesPath))
+            if (!Directory.Exists(path))
             {
                 _logger.LogInformation("directory doesn't exist");
                 try
                 {
-                    Directory.CreateDirectory(_appOptions.FilesPath);
+                    Directory.CreateDirectory(path);
                     _logger.LogInformation("directory was created");
 
                 }

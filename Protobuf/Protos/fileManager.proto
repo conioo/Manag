@@ -19,7 +19,8 @@ message RemoveFileRequest{
 }
 
 message FilesResponse{
-	repeated string filenames = 1;
+	repeated string audio_filenames = 1;
+	repeated string images_filenames = 2;
 }
 
 //filemanager save --file "s.png"
