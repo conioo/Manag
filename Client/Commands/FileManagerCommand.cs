@@ -1,6 +1,9 @@
-﻿using Google.Protobuf;
+﻿using Client.Helpers;
+using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using System.CommandLine;
+using YoutubeExplode;
+using YoutubeExplode.Videos.Streams;
 using Command = System.CommandLine.Command;
 
 namespace Client.Commands
@@ -13,6 +16,19 @@ namespace Client.Commands
         {
             byte[] data = File.ReadAllBytes(fileInfo.FullName);
             return ByteString.CopyFrom(data);
+        }
+
+        private async Task<ByteString> GetByteStringFromYoutube(string videoUrl)
+        {
+            var youtube = new YoutubeClient();
+
+            var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoUrl);
+
+            var streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+
+            var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
+
+            return ByteString.FromStream(stream);
         }
         public FileManagerCommand(GrpcManager grpcManager, string name = "filemanager", string? description = "management files") : base(name, description)
         {
@@ -28,29 +44,59 @@ namespace Client.Commands
         {
             var command = new Command("add", "adding a new file");
 
-            var fileOption = new Option<FileInfo>(name: "--file", description: "path to file") { IsRequired = true};
+            var fileOption = new Option<FileInfo>(name: "--file", description: "path to file") { };
             fileOption.AddAlias("-f");
-            var filenameOption = new Option<string>(name: "--filename", description: "filename") { };
-            filenameOption.AddAlias("-fn");
+
+            var filenameOption = new Option<string>(name: "--name", description: "filename") { };
+            filenameOption.AddAlias("-n");
+
+            var linkOption = new Option<string>(name: "--link", description: "link to youtube film, save audio from youtube film, filename is required") { };
+            linkOption.AddAlias("-l");
 
             command.AddOption(fileOption);
             command.AddOption(filenameOption);
+            command.AddOption(linkOption);
 
-            command.SetHandler(async (fileInfo, filename) =>
+            command.SetHandler(async (fileInfo, filename, link) =>
             {
-                if (String.IsNullOrEmpty(filename))
+                var fileRequest = new FileRequest();
+
+                if (fileInfo is null && link is null)
                 {
-                    filename = fileInfo.Name;
+                    ConsoleHelper.WriteError("can't be file and link option at the same time");
+                    return;
                 }
 
-                var fileRequest = new FileRequest()
-                { Filename = filename, Content = ConvertToByteString(fileInfo) };
+                if (link is not null)
+                {
+                    if (String.IsNullOrEmpty(filename))
+                    {
+                        ConsoleHelper.WriteError("filename is required when you provide a link");
+                        return;
+                    }
+
+                    fileRequest.Content = await GetByteStringFromYoutube(link);
+                    fileRequest.Filename = filename;
+                }
+                else
+                {
+                    fileRequest.Content = ConvertToByteString(fileInfo);
+
+                    if (String.IsNullOrEmpty(filename))
+                    {
+                        fileRequest.Filename = fileInfo.Name;
+                    }
+                    else
+                    {
+                        fileRequest.Filename = filename;
+                    }
+                }
 
                 var call = _grpcManager.FileManagerClient.SaveFileAsync(fileRequest, deadline: DateTime.UtcNow.AddSeconds(10));
 
                 var response = await call;
 
-            }, fileOption, filenameOption);
+            }, fileOption, filenameOption, linkOption);
 
             return command;
         }
@@ -60,7 +106,7 @@ namespace Client.Commands
             var command = new Command("remove", "removing a file");
 
             var filenameOption = new Option<string>(name: "--filename", description: "filename") { IsRequired = true };
-            filenameOption.AddAlias("-fn");
+            filenameOption.AddAlias("-n");
 
             command.AddOption(filenameOption);
 
@@ -126,3 +172,4 @@ namespace Client.Commands
         }
     }
 }
+

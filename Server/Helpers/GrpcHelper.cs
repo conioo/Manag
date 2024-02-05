@@ -18,11 +18,16 @@ namespace Server.Helpers
             //{
             //    HttpHandler = socketsHttpHandler
             //});
+            var channelOptions = new GrpcChannelOptions
+            {
+                MaxSendMessageSize = null, // 16 MB
+                MaxReceiveMessageSize = null // 16 MB
+            };
 
-            return GrpcChannel.ForAddress($"http://localhost:6580");
+            return GrpcChannel.ForAddress($"http://localhost:6580", channelOptions);
         }
     }
-
+    
     public class NamedPipesConnectionFactory
     {
         private readonly string pipeName;

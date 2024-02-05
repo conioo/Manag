@@ -24,7 +24,12 @@ namespace Manag
             builder.Configuration.AddJsonFile("C:\\Users\\posce\\Documents\\Manag\\Common\\Configuration\\common.json");
             builder.Services.AddOptions<ApplicationOptions>().Bind(builder.Configuration.GetSection("AppSettings"));
 
-            builder.Services.AddGrpc();
+            builder.Services.AddGrpc(options =>
+            {
+                options.MaxReceiveMessageSize = null;
+                options.MaxSendMessageSize = null;
+            });
+
             builder.WebHost.UseUrls("http://localhost:6580");
 
             var app = builder.Build();
@@ -32,6 +37,7 @@ namespace Manag
             // Configure the HTTP request pipeline.
             app.MapGrpcService<InfoService>();
             app.MapGrpcService<WindowsSettingsService>();
+            app.MapGrpcService<ProcessService>();
 
             app.Run();
         }

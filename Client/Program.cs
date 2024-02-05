@@ -23,9 +23,10 @@ namespace Client
             while (true)
             {
                 Console.WriteLine("enter ip address:");
-                var address = Console.ReadLine();
-                //var address = "localhost";
-
+                Thread.Sleep(1200);
+                var address = "localhost";
+                //var address = Console.ReadLine();
+                
                 if (string.IsNullOrEmpty(address))
                 {
                     continue;
@@ -54,7 +55,8 @@ namespace Client
             var rootCommand = new RootCommand("Manag app for trolling")
             {
                 new FileManagerCommand(grpcManager),
-                new SettingsCommand(grpcManager)
+                new SettingsCommand(grpcManager),
+                new ProcessCommand(grpcManager)
             };
 
             var commandLineBuilder = new CommandLineBuilder(rootCommand);

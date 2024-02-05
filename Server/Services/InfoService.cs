@@ -1,10 +1,13 @@
-﻿using Google.Protobuf;
+﻿//using Common.Helpers;
+using Common.Helpers;
+using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Server.Helpers;
 using System.Diagnostics;
 using System.IO.Pipes;
 using System.Security.Principal;
+using Process = System.Diagnostics.Process;
 
 namespace Server.Services
 {
@@ -23,7 +26,7 @@ namespace Server.Services
             //var _channel = CreateChannel();
             //var cc = new InfoClient(_channel);
             //cc.CheckHealth(new Empty());
-
+            //AudioHelper.changeVolume(0);
             return Task.FromResult(response);
         }
 
@@ -37,8 +40,8 @@ namespace Server.Services
                 {
                     FileName = @"C:\Users\posce\Documents\Manag\Manag\bin\Release\net8.0\publish\Manag.exe",
                     CreateNoWindow = false,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false
+                    //RedirectStandardOutput = true,
+                    //UseShellExecute = false
                 }
             };
             process.Start();

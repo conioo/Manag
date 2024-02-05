@@ -2,6 +2,8 @@
 using static Google.Protobuf.FileManager;
 using static Google.Protobuf.Info;
 using static Google.Protobuf.WindowsSettings;
+using static Google.Protobuf.Process;
+
 
 namespace Client
 {
@@ -24,6 +26,23 @@ namespace Client
             }
 
             private set { _windowsSettingsClient = value; }
+        }
+
+        private ProcessClient? _processClient;
+
+        internal ProcessClient ProcessClient
+        {
+            get
+            {
+                if (_processClient == null)
+                {
+                    _processClient = new ProcessClient(_channel);
+                }
+
+                return _processClient;
+            }
+
+            private set { _processClient = value; }
         }
 
         private FileManagerClient? _fileManagerClient;
@@ -62,7 +81,13 @@ namespace Client
 
         internal GrpcManager(string address)
         {
-            this._channel = GrpcChannel.ForAddress(address);
+            var channelOptions = new GrpcChannelOptions
+            {
+                MaxSendMessageSize = null, // 16 MB
+                MaxReceiveMessageSize = null // 16 MB
+            };
+
+            this._channel = GrpcChannel.ForAddress(address, channelOptions);
 
             var response = InfoClient.CheckHealth(new Google.Protobuf.WellKnownTypes.Empty());
 

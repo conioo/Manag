@@ -29,8 +29,14 @@ namespace Server
             builder.Services.AddOptions<ApplicationOptions>().Bind(builder.Configuration.GetSection("AppSettings"));
 
             // Add services to the container.
-            builder.Services.AddGrpc();
+            builder.Services.AddGrpc(options =>
+            {
+                options.MaxReceiveMessageSize = null;
+                options.MaxSendMessageSize = null;
+            });
+            //builder.WebHost.UseUrls("http://0.0.0.0:6570");
             builder.WebHost.UseUrls("http://localhost:6570");
+
             //options.Interceptors.Add<ErrorHandlingInterceptor>();
             var app = builder.Build();
             
@@ -39,6 +45,7 @@ namespace Server
             app.MapGrpcService<WindowsSettingsService>();
             app.MapGrpcService<FileManagerService>();
             app.MapGrpcService<InfoService>();
+            app.MapGrpcService<ProcessService>();
 
             app.UseSerilogRequestLogging();
 

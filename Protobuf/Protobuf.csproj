@@ -21,8 +21,7 @@
 	<ItemGroup>
 	  <None Remove="Protos\fileManager.proto" />
 	  <None Remove="Protos\info.proto" />
-	  <None Remove="Protos\windowsCommand.proto" />
-	  <None Remove="Protos\windowsRegister.proto" />
+	  <None Remove="Protos\process.proto" />
 	  <None Remove="Protos\windowsSettings.proto" />
 	</ItemGroup>
 </Project>
