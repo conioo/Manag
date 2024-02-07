@@ -1,4 +1,5 @@
-﻿using Google.Protobuf;
+﻿using Client.Commands.Options;
+using Google.Protobuf;
 using System.CommandLine;
 using Command = System.CommandLine.Command;
 
@@ -27,17 +28,26 @@ namespace Client.Commands
 
             command.AddOption(filenameOption);
 
-            command.SetHandler(async (filename) =>
+            var delayOption = new DelayOption();
+            command.AddOption(delayOption);
+
+            command.SetHandler(async (filename, delay) =>
             {
 
                 var wallpaperRequest = new WallpaperRequest()
-                { Filename = filename};
+                { Filename = filename, Delay = delay};
 
-                var call = _grpcManager.WindowsSettingsClient.ChangeWallpaperAsync(wallpaperRequest, deadline: DateTime.UtcNow.AddSeconds(5));
+                var deadline = 5;
+                if (delay != null)
+                {
+                    deadline += delay;
+                }
+
+                var call = _grpcManager.WindowsSettingsClient.ChangeWallpaperAsync(wallpaperRequest, deadline: DateTime.UtcNow.AddSeconds(deadline));
 
                 var response = await call;
 
-            }, filenameOption);
+            }, filenameOption, delayOption);
 
             return command;
         }

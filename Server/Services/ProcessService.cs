@@ -18,6 +18,8 @@ namespace Server.Services
 
         public override async Task<Empty> NewIntervalProcess(IntervalRequest request, ServerCallContext context)
         {
+            ServiceHelper.Delay(request.Delay);
+
             var channel = GrpcHelper.CreateChannel();
 
             var client = new Process.ProcessClient(channel);
@@ -27,6 +29,8 @@ namespace Server.Services
 
         public override async Task<Empty> NewProcess(ProcessRequest request, ServerCallContext context)
         {
+            ServiceHelper.Delay(request.Delay);
+
             var channel = GrpcHelper.CreateChannel();
 
             var client = new Process.ProcessClient(channel);
@@ -36,6 +40,8 @@ namespace Server.Services
 
         public override async Task<ShutdownResponse> ShutdownProcess(ShutdownRequest request, ServerCallContext context)
         {
+            ServiceHelper.Delay(request.Delay);
+
             var channel = GrpcHelper.CreateChannel();
 
             var client = new Process.ProcessClient(channel);
@@ -43,8 +49,10 @@ namespace Server.Services
             return await client.ShutdownProcessAsync(request);
         }
 
-        public override async Task<Empty> ShutdownWindows(Empty request, ServerCallContext context)
+        public override async Task<Empty> ShutdownWindows(ShutdownWindowsRequest request, ServerCallContext context)
         {
+            ServiceHelper.Delay(request.Delay);
+
             var channel = GrpcHelper.CreateChannel();
 
             var client = new Process.ProcessClient(channel);

@@ -9,7 +9,7 @@ service Process{
 	rpc NewProcess(ProcessRequest) returns(google.protobuf.Empty);
 	rpc StartYoutube(YoutubeRequest) returns(google.protobuf.Empty);
 	rpc GetProcesses(google.protobuf.Empty) returns(ProcessesResponse);
-	rpc ShutdownWindows(google.protobuf.Empty) returns(google.protobuf.Empty);
+	rpc ShutdownWindows(ShutdownWindowsRequest) returns(google.protobuf.Empty);
 	rpc ShutdownProcess(ShutdownRequest) returns(ShutdownResponse);
 }
 
@@ -20,6 +20,7 @@ message IntervalRequest{
 	int32 interval_in_seconds = 4;
 	StringValue arguments = 5;
 	Int32Value volume = 6;
+	Int32Value delay = 7;
 }
 
 message ProcessRequest{
@@ -27,10 +28,12 @@ message ProcessRequest{
 	StringValue arguments = 2;
 	int32 count = 3;
 	Int32Value volume = 4;
+	Int32Value delay = 5;
 }
 
 message YoutubeRequest{
 	string link = 1;
+	Int32Value delay = 2;
 }
 
 message ProcessesResponse{
@@ -40,6 +43,11 @@ message ProcessesResponse{
 message ShutdownRequest{
 	string process_name = 1;
 	BoolValue is_all = 2;
+	Int32Value delay = 3;
+}
+
+message ShutdownWindowsRequest{
+	Int32Value delay = 1;
 }
 
 message ShutdownResponse{

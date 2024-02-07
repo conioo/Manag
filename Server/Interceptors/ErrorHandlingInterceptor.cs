@@ -1,5 +1,6 @@
 ﻿using Grpc.Core;
 using Grpc.Core.Interceptors;
+using System.Reflection.PortableExecutable;
 
 namespace Server.Interceptors
 {
@@ -16,10 +17,13 @@ namespace Server.Interceptors
        ServerCallContext context,
        UnaryServerMethod<TRequest, TResponse> continuation)
         {
-            _logger.LogInformation("Starting receiving call. Type/Method: {Type} / {Method}",
-                MethodType.Unary, context.Method);
+            _logger.LogInformation("kwadratowanie");
             try
             {
+                //request.
+                Console.WriteLine(request);
+              
+                Console.WriteLine(context.RequestHeaders.GetValue("Filename"));
                 return await continuation(request, context);
             }
             catch (Exception ex)

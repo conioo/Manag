@@ -1,8 +1,8 @@
-﻿using Client.Helpers;
+﻿using Client.Commands.Options;
+using Client.Helpers;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using System.CommandLine;
-using Client.Commands.Validators;
 using Command = System.CommandLine.Command;
 
 namespace Client.Commands
@@ -52,19 +52,23 @@ namespace Client.Commands
             var volumeOption = new Option<int>(name: "--volume", description: "optional system volume, range: 0-100") { };
             volumeOption.AddAlias("-v");
 
+            var delayOption = new DelayOption();
+
             volumeOption.AddValidator(Validators.Validators.VolumeValidator(volumeOption));
 
             command.AddOption(countOption);
             command.AddOption(argumentOption);
             command.AddOption(processNameOption);
             command.AddOption(volumeOption);
+            command.AddOption(delayOption);
 
-            command.SetHandler(async (name, argument, count, volume) =>
+            command.SetHandler(async (name, argument, count, volume, delay) =>
             {
                 var processRequest = new ProcessRequest()
                 {
                     ProcessName = name,
-                    Count = count
+                    Count = count,
+                    Delay = delay
                 };
 
                 if (volume != 0)
@@ -76,12 +80,17 @@ namespace Client.Commands
                 {
                     processRequest.Arguments = argument;
                 }
+                var deadline = 5;
+                if(delay != null)
+                {
+                    deadline += delay;
+                }
 
-                var call = _grpcManager.ProcessClient.NewProcessAsync(processRequest, deadline: DateTime.UtcNow.AddSeconds(5));
+                var call = _grpcManager.ProcessClient.NewProcessAsync(processRequest, deadline: DateTime.UtcNow.AddSeconds(deadline));
 
                 var response = await call;
 
-            }, processNameOption, argumentOption, countOption, volumeOption);
+            }, processNameOption, argumentOption, countOption, volumeOption, delayOption);
 
             return command;
         }
@@ -109,6 +118,9 @@ namespace Client.Commands
             volumeOption.AddAlias("-v");
             volumeOption.AddValidator(Validators.Validators.VolumeValidator(volumeOption));
 
+            var delayOption = new DelayOption();
+            command.AddOption(delayOption);
+
             command.AddOption(countOption);
             command.AddOption(argumentOption);
             command.AddOption(processNameOption);
@@ -116,14 +128,15 @@ namespace Client.Commands
             command.AddOption(intervalsOption);
             command.AddOption(volumeOption);
 
-            command.SetHandler(async (name, argument, countPerInterval, count, time, volume) =>
+            command.SetHandler(async (name, argument, countPerInterval, count, time, volume, delay) =>
             {
                 var intervalRequest = new IntervalRequest()
                 {
                     ProcessName = name,
                     CountPerInterval = countPerInterval,
                     Count = count,
-                    IntervalInSeconds = time
+                    IntervalInSeconds = time,
+                    Delay = delay
                 };
 
                 if (volume != 0)
@@ -140,7 +153,7 @@ namespace Client.Commands
 
                 var response = await call;
 
-            }, processNameOption, argumentOption, intervalsOption, countOption, timeOption, volumeOption);
+            }, processNameOption, argumentOption, intervalsOption, countOption, timeOption, volumeOption, delayOption);
 
             return command;
         }
@@ -174,10 +187,13 @@ namespace Client.Commands
             var allOption = new Option<bool>(name: "--all", description: "kill all processes");
             allOption.AddAlias("-a");
 
+            var delayOption = new DelayOption();
+            command.AddOption(delayOption);
+
             command.AddOption(processNameOption);
             command.AddOption(allOption);
 
-            command.SetHandler(async (name, all) =>
+            command.SetHandler(async (name, all, delay) =>
             {
                 if ((name is null && all is false) || (name is not null && all is true))
                 {
@@ -187,7 +203,8 @@ namespace Client.Commands
 
                 var processRequest = new ShutdownRequest()
                 {
-                    IsAll = all
+                    IsAll = all,
+                    Delay = delay
                 };
 
                 if (name is not null)
@@ -195,13 +212,19 @@ namespace Client.Commands
                     processRequest.ProcessName = name;
                 }
 
-                var call = _grpcManager.ProcessClient.ShutdownProcessAsync(processRequest, deadline: DateTime.UtcNow.AddSeconds(5));
+                var deadline = 5;
+                if (delay != null)
+                {
+                    deadline += delay;
+                }
+
+                var call = _grpcManager.ProcessClient.ShutdownProcessAsync(processRequest, deadline: DateTime.UtcNow.AddSeconds(deadline));
 
                 var response = await call;
 
                 Console.WriteLine($"shutdown processes: {response.CountShutdownProcesses}");
 
-            }, processNameOption, allOption);
+            }, processNameOption, allOption, delayOption);
 
             return command;
         }
@@ -210,13 +233,24 @@ namespace Client.Commands
         {
             var command = new Command("win", "shutdown a system");
 
-            command.SetHandler(async () =>
+            var delayOption = new DelayOption();
+            command.AddOption(delayOption);
+
+            command.SetHandler(async (delay) =>
             {
-                var call = _grpcManager.ProcessClient.ShutdownWindowsAsync(new Empty(), deadline: DateTime.UtcNow.AddSeconds(5));
+                var request = new ShutdownWindowsRequest() { Delay = delay };
+
+                var deadline = 5;
+                if (delay != null)
+                {
+                    deadline += delay;
+                }
+
+                var call = _grpcManager.ProcessClient.ShutdownWindowsAsync(request, deadline: DateTime.UtcNow.AddSeconds(deadline));
 
                 var response = await call;
 
-            });
+            }, delayOption);
 
             return command;
         }

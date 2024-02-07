@@ -1,6 +1,7 @@
 using Common.Configuration;
 using Serilog;
 using Serilog.Settings.Configuration;
+using Server.Interceptors;
 using Server.Services;
 
 namespace Server
@@ -33,11 +34,12 @@ namespace Server
             {
                 options.MaxReceiveMessageSize = null;
                 options.MaxSendMessageSize = null;
+                options.Interceptors.Add<ErrorHandlingInterceptor>();
             });
             //builder.WebHost.UseUrls("http://0.0.0.0:6570");
             builder.WebHost.UseUrls("http://localhost:6570");
 
-            //options.Interceptors.Add<ErrorHandlingInterceptor>();
+            
             var app = builder.Build();
             
             // Configure the HTTP request pipeline.

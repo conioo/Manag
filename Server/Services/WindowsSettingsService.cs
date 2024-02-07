@@ -19,6 +19,8 @@ namespace Server.Services
 
         public override Task<Empty> ChangeWallpaper(WallpaperRequest request, ServerCallContext context)
         {
+            ServiceHelper.Delay(request.Delay);
+
             try
             {
                 var channel = GrpcHelper.CreateChannel();
@@ -41,7 +43,7 @@ namespace Server.Services
 
         public override Task<Empty> ChangeMouseSize(MouseRequest request, ServerCallContext context)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(new Empty());
         }
     }
 }

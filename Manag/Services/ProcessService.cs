@@ -105,7 +105,7 @@ namespace Server.Services
             return Task.FromResult(response);
         }
 
-        public override Task<Empty> ShutdownWindows(Empty request, ServerCallContext context)
+        public override Task<Empty> ShutdownWindows(ShutdownWindowsRequest request, ServerCallContext context)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo
             {

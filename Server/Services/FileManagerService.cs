@@ -21,6 +21,8 @@ namespace Server.Services
 
         public override Task<Empty> SaveFile(FileRequest request, ServerCallContext context)
         {
+            _logger.LogInformation("zapisywanieeeeee");
+
             try
             {
                 var path = Path.Combine(_appOptions.AppFolder, FileHelper.GetFileType(request.Filename).GetFolderName(_appOptions));
