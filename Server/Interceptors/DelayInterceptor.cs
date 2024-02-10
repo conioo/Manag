@@ -1,16 +1,14 @@
 ﻿using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Newtonsoft.Json;
-using System.Dynamic;
-using System.Reflection.PortableExecutable;
 
 namespace Server.Interceptors
 {
-    public class ErrorHandlingInterceptor : Interceptor
+    public class DelayInterceptor : Interceptor
     {
-        private readonly ILogger<ErrorHandlingInterceptor> _logger;
+        private readonly ILogger<DelayInterceptor> _logger;
 
-        public ErrorHandlingInterceptor(ILogger<ErrorHandlingInterceptor> logger)
+        public DelayInterceptor(ILogger<DelayInterceptor> logger)
         {
             _logger = logger;
         }
@@ -19,15 +17,18 @@ namespace Server.Interceptors
        ServerCallContext context,
        UnaryServerMethod<TRequest, TResponse> continuation)
         {
-            //_logger.LogInformation("kwadratowanie");
             try
             {
-                //request.
-                dynamic person = JsonConvert.DeserializeObject(request.ToString());
-                //Console.WriteLine(request);
-                Console.WriteLine(person?.delay != null);
+                if (request is not null)
+                {
+                    dynamic? person = JsonConvert.DeserializeObject(request.ToString());
 
-                Console.WriteLine(context.RequestHeaders.GetValue("Filename"));
+                    if (person?.delay != null)
+                    {
+                        Thread.Sleep((int)person.delay * 1000);
+                    }
+                }
+
                 return await continuation(request, context);
             }
             catch (Exception ex)

@@ -34,9 +34,9 @@ namespace Server
             {
                 options.MaxReceiveMessageSize = null;
                 options.MaxSendMessageSize = null;
-                options.Interceptors.Add<ErrorHandlingInterceptor>();
+                options.Interceptors.Add<DelayInterceptor>();
             });
-            //builder.WebHost.UseUrls("http://0.0.0.0:6570");
+
             builder.WebHost.UseUrls("http://localhost:6570");
 
             

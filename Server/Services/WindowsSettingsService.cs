@@ -19,8 +19,6 @@ namespace Server.Services
 
         public override Task<Empty> ChangeWallpaper(WallpaperRequest request, ServerCallContext context)
         {
-            ServiceHelper.Delay(request.Delay);
-
             try
             {
                 var channel = GrpcHelper.CreateChannel();
