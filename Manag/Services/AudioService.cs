@@ -3,6 +3,7 @@ using Common.Helpers;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Manag.Utilities;
 using Microsoft.Extensions.Options;
 using NAudio.Wave;
 using System.Media;
@@ -51,6 +52,23 @@ namespace Manag.Services
             AudioHelper.ChangeVolume(request.Volume);
 
             _ = playAudio(Path.Combine(_appOptions.AppFolder, _appOptions.AudioPath, request.Filename));
+
+            return Task.FromResult(new Empty());
+        }
+
+        public override Task<Empty> Record(RecordRequest request, ServerCallContext context)
+        {
+            var path = Path.Combine(_appOptions.AppFolder, _appOptions.AudioPath);
+
+            FileHelper.CheckFileExist(path, request.Name);
+
+            var recorder = new Recorder(path, request.Name);
+
+            recorder.StartRecording();
+
+            Thread.Sleep(request.Time * 1000);
+
+            recorder.EndRecording();
 
             return Task.FromResult(new Empty());
         }

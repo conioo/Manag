@@ -1,4 +1,6 @@
-﻿using Common.Types;
+﻿using AngleSharp.Io;
+using Common.Types;
+using Grpc.Core;
 
 namespace Common.Helpers
 {
@@ -29,6 +31,14 @@ namespace Common.Helpers
                     return FileType.Audio;
                 default:
                     return FileType.Undefinied;
+            }
+        }
+
+        public static void CheckFileExist(string path, string filename)
+        {
+            if (File.Exists(Path.Combine(path, filename)))
+            {
+                throw new RpcException(new Status(StatusCode.Internal, $"file {filename} already exist"));
             }
         }
     }

@@ -1,7 +1,6 @@
 ﻿using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using YoutubeExplode;
-using YoutubeExplode.Converter;
 using YoutubeExplode.Videos.Streams;
 
 namespace Common.Helpers

@@ -42,5 +42,14 @@ namespace Server.Services
 
             return await client.SystemPlayAsync(request);
         }
+
+        public async override Task<Empty> Record(RecordRequest request, ServerCallContext context)
+        {
+            var channel = GrpcHelper.CreateChannel();
+
+            var client = new Audio.AudioClient(channel);
+
+            return await client.RecordAsync(request);
+        }
     }
 }

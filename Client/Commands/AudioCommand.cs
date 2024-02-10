@@ -23,13 +23,14 @@ namespace Client.Commands
             this.AddCommand(muteCommand());
             this.AddCommand(systemCommand());
             this.AddCommand(playCommand());
+            this.AddCommand(recordCommand());
         }
 
         private Command volumeCommand()
         {
             var command = new Command("volume", "change volume");
 
-            var volumeOption = new Option<int>(name: "--volume", description: "system volume, range: 0-100") {IsRequired = true };
+            var volumeOption = new Option<int>(name: "--volume", description: "system volume, range: 0-100") { IsRequired = true };
             volumeOption.AddAlias("-v");
 
             volumeOption.AddValidator(Validators.Validators.VolumeValidator(volumeOption));
@@ -127,11 +128,11 @@ namespace Client.Commands
                     Time = time,
                 };
 
-                if(type == "beep")
+                if (type == "beep")
                 {
                     systemPlayRequest.Type = SystemPlayRequest.Types.SystemSound.Beep;
                 }
-                else if(type == "hand")
+                else if (type == "hand")
                 {
                     systemPlayRequest.Type = SystemPlayRequest.Types.SystemSound.Hand;
                 }
@@ -163,7 +164,7 @@ namespace Client.Commands
             var volumeOption = new Option<int>(name: "--volume", description: "system volume, range: 0-100") { IsRequired = true };
             volumeOption.AddAlias("-v");
 
-            var nameOption = new Option<string>(name: "--name", description: "filename audio name") { IsRequired = true };
+            var nameOption = new Option<string>(name: "--name", description: "filename audio") { IsRequired = true };
             nameOption.AddAlias("-n");
 
             volumeOption.AddValidator(Validators.Validators.VolumeValidator(volumeOption));
@@ -194,6 +195,46 @@ namespace Client.Commands
                 var response = await call;
 
             }, nameOption, volumeOption, delayOption);
+
+            return command;
+        }
+
+        private Command recordCommand()
+        {
+            var command = new Command("record", "record audio from microphone and save it");
+
+            var timeOption = new Option<int>(name: "--time", description: "audio recording time") { IsRequired = true };
+            timeOption.AddAlias("-t");
+
+            var nameOption = new Option<string>(name: "--name", description: "filename") { IsRequired = true };
+            nameOption.AddAlias("-n");
+
+            var delayOption = new DelayOption();
+
+            command.AddOption(timeOption);
+            command.AddOption(nameOption);
+            command.AddOption(delayOption);
+
+            command.SetHandler(async (name, time, delay) =>
+            {
+                var recordRequest = new RecordRequest()
+                {
+                    Delay = delay,
+                    Name = name,
+                    Time = time,
+                };
+
+                var deadline = 5;
+                if (delay != null)
+                {
+                    deadline += delay;
+                }
+
+                var call = _grpcManager.AudioClient.RecordAsync(recordRequest, deadline: DateTime.UtcNow.AddSeconds(deadline));
+
+                var response = await call;
+
+            }, nameOption, timeOption, delayOption);
 
             return command;
         }

@@ -1,11 +1,8 @@
 ﻿using Client.Commands;
-using Google.Protobuf;
 using Grpc.Core;
-using NAudio.Wave;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Client
 {
@@ -18,11 +15,6 @@ namespace Client
         static void Main(string[] args)
         {
             Console.WriteLine("welcome to Manag application");
-
-            //var rec = new Recorder(0, "C:\\Users\\posce\\Desktop\\glosy\\", "1.wav");
-            //rec.StartRecording();
-            //Console.ReadLine();
-            //rec.RecordEnd();
 
             AppLoop();
         }
