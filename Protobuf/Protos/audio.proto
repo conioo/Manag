@@ -1,0 +1,47 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+package google.protobuf;
+
+service Audio{
+	rpc ChangeVolume(VolumeRequest) returns(google.protobuf.Empty);
+	rpc Mute(MuteRequest) returns(google.protobuf.Empty);
+	rpc Play(PlayRequest) returns(google.protobuf.Empty);
+	rpc SystemPlay(SystemPlayRequest) returns(google.protobuf.Empty);
+	rpc Record(RecordRequest) returns(google.protobuf.Empty);
+}
+
+message VolumeRequest{
+	int32 volume = 1;
+	Int32Value delay = 2;
+}
+
+message PlayRequest{
+	string filename = 1;
+	int32 volume = 2;
+	Int32Value delay = 3;
+}
+
+message MuteRequest{
+	Int32Value delay = 1;
+}
+
+message SystemPlayRequest{
+	int32 count = 1;
+	int32 volume = 2;
+	Int32Value delay = 3;
+	SystemSound type = 4;
+	int32 time = 5;
+
+	enum SystemSound{
+		Beep = 0;
+		Hand = 1;
+	}
+}
+
+message RecordRequest{
+	string name = 1;
+	int32 time = 2;
+	Int32Value delay = 3;
+}

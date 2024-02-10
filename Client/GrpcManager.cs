@@ -3,6 +3,7 @@ using static Google.Protobuf.FileManager;
 using static Google.Protobuf.Info;
 using static Google.Protobuf.WindowsSettings;
 using static Google.Protobuf.Process;
+using static Google.Protobuf.Audio;
 
 
 namespace Client
@@ -77,6 +78,23 @@ namespace Client
             }
 
             private set { _infoClient = value; }
+        }
+
+        private AudioClient? _audioClient;
+
+        internal AudioClient AudioClient
+        {
+            get
+            {
+                if (_audioClient == null)
+                {
+                    _audioClient = new AudioClient(_channel);
+                }
+
+                return _audioClient;
+            }
+
+            private set { _audioClient = value; }
         }
 
         internal GrpcManager(string address)

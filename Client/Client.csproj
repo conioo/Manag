@@ -10,7 +10,9 @@
   <ItemGroup>
     <PackageReference Include="Grpc.HealthCheck" Version="2.60.0" />
     <PackageReference Include="Grpc.Net.Client" Version="2.60.0" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="System.Windows.Extensions" Version="8.0.0" />
     <PackageReference Include="YoutubeExplode" Version="6.3.12" />
   </ItemGroup>
 

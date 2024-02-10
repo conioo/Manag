@@ -1,5 +1,7 @@
 ﻿using Grpc.Core;
 using Grpc.Core.Interceptors;
+using Newtonsoft.Json;
+using System.Dynamic;
 using System.Reflection.PortableExecutable;
 
 namespace Server.Interceptors
@@ -17,12 +19,14 @@ namespace Server.Interceptors
        ServerCallContext context,
        UnaryServerMethod<TRequest, TResponse> continuation)
         {
-            _logger.LogInformation("kwadratowanie");
+            //_logger.LogInformation("kwadratowanie");
             try
             {
                 //request.
-                Console.WriteLine(request);
-              
+                dynamic person = JsonConvert.DeserializeObject(request.ToString());
+                //Console.WriteLine(request);
+                Console.WriteLine(person?.delay != null);
+
                 Console.WriteLine(context.RequestHeaders.GetValue("Filename"));
                 return await continuation(request, context);
             }

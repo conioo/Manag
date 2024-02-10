@@ -8,7 +8,7 @@ namespace Common.Helpers
 {
     public static class AudioHelper
     {
-        public static void changeVolume(int? volume)
+        public static void ChangeVolume(int? volume)
         {
             if (volume is null) return;
 
@@ -16,6 +16,14 @@ namespace Common.Helpers
 
             audioDevice.AudioEndpointVolume.MasterVolumeLevelScalar = ((float)(volume / 100f));
             audioDevice.AudioEndpointVolume.Mute = false;
+        }
+
+        public static void Mute()
+        {
+            var audioDevice = new MMDeviceEnumerator().GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+
+            audioDevice.AudioEndpointVolume.MasterVolumeLevelScalar = 0f;
+            audioDevice.AudioEndpointVolume.Mute = true;
         }
 
 

@@ -19,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Protos\audio.proto" />
 	  <None Remove="Protos\fileManager.proto" />
 	  <None Remove="Protos\info.proto" />
 	  <None Remove="Protos\process.proto" />

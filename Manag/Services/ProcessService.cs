@@ -44,7 +44,7 @@ namespace Server.Services
                 UseShellExecute = true
             };
 
-            AudioHelper.changeVolume(request.Volume);
+            AudioHelper.ChangeVolume(request.Volume);
 
             for (int i = 0; i < request.Count; ++i)
             {
@@ -132,7 +132,7 @@ namespace Server.Services
 
             for (int i = 0; i < request.Count; ++i)
             {
-                AudioHelper.changeVolume(request.Volume);
+                AudioHelper.ChangeVolume(request.Volume);
 
                 for (int k = 0; k < request.CountPerInterval; ++k)
                 {

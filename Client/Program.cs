@@ -1,8 +1,11 @@
 ﻿using Client.Commands;
+using Google.Protobuf;
 using Grpc.Core;
+using NAudio.Wave;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Client
 {
@@ -16,6 +19,11 @@ namespace Client
         {
             Console.WriteLine("welcome to Manag application");
 
+            //var rec = new Recorder(0, "C:\\Users\\posce\\Desktop\\glosy\\", "1.wav");
+            //rec.StartRecording();
+            //Console.ReadLine();
+            //rec.RecordEnd();
+
             AppLoop();
         }
         static void AppLoop()
@@ -26,7 +34,7 @@ namespace Client
                 Thread.Sleep(1200);
                 var address = "localhost";
                 //var address = Console.ReadLine();
-                
+
                 if (string.IsNullOrEmpty(address))
                 {
                     continue;
@@ -56,7 +64,8 @@ namespace Client
             {
                 new FileManagerCommand(grpcManager),
                 new SettingsCommand(grpcManager),
-                new ProcessCommand(grpcManager)
+                new ProcessCommand(grpcManager),
+                new AudioCommand(grpcManager)
             };
 
             var commandLineBuilder = new CommandLineBuilder(rootCommand);
