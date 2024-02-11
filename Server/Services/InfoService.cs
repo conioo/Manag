@@ -1,11 +1,8 @@
-﻿using Common.Helpers;
-using Google.Protobuf;
+﻿using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Server.Helpers;
 using System.Diagnostics;
-using System.IO.Pipes;
-using System.Security.Principal;
 using Process = System.Diagnostics.Process;
 
 namespace Server.Services
@@ -69,6 +66,15 @@ namespace Server.Services
                     process.Kill();
                 }
             }
+        }
+
+        public override async Task<ScreenResponse> GetScreen(ScreenRequest request, ServerCallContext context)
+        {
+            var channel = GrpcHelper.CreateChannel();
+
+            var client = new Info.InfoClient(channel);
+
+            return await client.GetScreenAsync(request);
         }
     }
 }

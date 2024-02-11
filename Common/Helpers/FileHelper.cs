@@ -41,5 +41,10 @@ namespace Common.Helpers
                 throw new RpcException(new Status(StatusCode.Internal, $"file {filename} already exist"));
             }
         }
+
+        public static void CheckFileExist(string path)
+        {
+            CheckFileExist(Path.GetFileName(path), Path.GetDirectoryName(path));
+        }
     }
 }

@@ -51,7 +51,11 @@ namespace Manag.Services
         {
             AudioHelper.ChangeVolume(request.Volume);
 
-            _ = playAudio(Path.Combine(_appOptions.AppFolder, _appOptions.AudioPath, request.Filename));
+            var path = Path.Combine(_appOptions.AppFolder, _appOptions.AudioPath, request.Filename);
+
+            FileHelper.CheckFileExist(path);
+
+            _ = playAudio(path);
 
             return Task.FromResult(new Empty());
         }

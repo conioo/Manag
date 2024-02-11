@@ -1,14 +1,25 @@
 ﻿syntax = "proto3";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 package google.protobuf;
 
 service Info{
 	rpc CheckHealth(google.protobuf.Empty) returns(HealthResponse);
 	rpc StartSession(google.protobuf.Empty) returns(google.protobuf.Empty);
 	rpc EndSession(google.protobuf.Empty) returns(google.protobuf.Empty);
+	rpc GetScreen(ScreenRequest) returns(ScreenResponse);
 }
 
 message HealthResponse{
 	bool status = 1;
+}
+
+message ScreenRequest{
+	string filename = 1;
+	bool download = 2;
+}
+
+message ScreenResponse{
+	BytesValue content = 1;
 }

@@ -3,6 +3,9 @@ using Grpc.Core;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Client
 {
@@ -17,6 +20,7 @@ namespace Client
             Console.WriteLine("welcome to Manag application");
 
             AppLoop();
+            //Testing();
         }
         static void AppLoop()
         {
@@ -57,7 +61,8 @@ namespace Client
                 new FileManagerCommand(grpcManager),
                 new SettingsCommand(grpcManager),
                 new ProcessCommand(grpcManager),
-                new AudioCommand(grpcManager)
+                new AudioCommand(grpcManager),
+                new InfoCommand(grpcManager),
             };
 
             var commandLineBuilder = new CommandLineBuilder(rootCommand);
@@ -119,6 +124,12 @@ namespace Client
                     var code = parser.Invoke(command);
                 }
             }
+        }
+
+
+        static void Testing()
+        {
+
         }
     }
 }
