@@ -49,6 +49,7 @@ namespace Server
             app.MapGrpcService<InfoService>();
             app.MapGrpcService<ProcessService>();
             app.MapGrpcService<AudioService>();
+            app.MapGrpcService<MessageService>();
 
             app.UseSerilogRequestLogging();
 

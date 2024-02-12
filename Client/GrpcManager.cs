@@ -4,6 +4,7 @@ using static Google.Protobuf.Info;
 using static Google.Protobuf.WindowsSettings;
 using static Google.Protobuf.Process;
 using static Google.Protobuf.Audio;
+using static Google.Protobuf.Message;
 
 
 namespace Client
@@ -95,6 +96,23 @@ namespace Client
             }
 
             private set { _audioClient = value; }
+        }
+
+        private MessageClient? _messageClient;
+
+        internal MessageClient MessageClient
+        {
+            get
+            {
+                if (_messageClient == null)
+                {
+                    _messageClient = new MessageClient(_channel);
+                }
+
+                return _messageClient;
+            }
+
+            private set { _messageClient = value; }
         }
 
         internal GrpcManager(string address)

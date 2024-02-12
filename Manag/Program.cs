@@ -39,6 +39,7 @@ namespace Manag
             app.MapGrpcService<WindowsSettingsService>();
             app.MapGrpcService<ProcessService>();
             app.MapGrpcService<AudioService>();
+            app.MapGrpcService<MessageService>();
 
             app.Run();
         }

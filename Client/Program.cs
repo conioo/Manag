@@ -3,8 +3,6 @@ using Grpc.Core;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 namespace Client
@@ -63,6 +61,7 @@ namespace Client
                 new ProcessCommand(grpcManager),
                 new AudioCommand(grpcManager),
                 new InfoCommand(grpcManager),
+                new MessageCommand(grpcManager),
             };
 
             var commandLineBuilder = new CommandLineBuilder(rootCommand);
@@ -126,10 +125,35 @@ namespace Client
             }
         }
 
+        //[DllImport("user32.dll", SetLastError = true)]
+        //static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
+        //const uint MB_OK = 0x00000000;
 
+        [DllImport("user32.dll")]
+        public static extern IntPtr MessageBox(IntPtr hWnd, string text, string caption, uint type);
+
+        public const uint MB_OK = 0x00000000;
+        public const uint MB_ICONINFORMATION = 0x00000040;
         static void Testing()
         {
+            //MessageBox(IntPtr.Zero, "Wystąpił błąd: " + "kwadraty", "Błąd", MB_OK);
+            //MessageBox(IntPtr.Zero, "Wystąpił błąd: " + "kwadraty", "Błąd", MB_OK);
+            //MessageBox(IntPtr.Zero, "Wystąpił błąd: " + "kwadraty", "Błąd", MB_OK);
+            //MessageBox(IntPtr.Zero, "Wystąpił błąd: " + "kwadraty", "Błąd", MB_OK);
+            //MessageBox(IntPtr.Zero, "Wystąpił błąd: " + "kwadraty", "Błąd", MB_OK);
+            //MessageBox(IntPtr.Zero, "Wystąpił błąd: " + "kwadraty", "Błąd", MB_OK);
+            //MessageBox(IntPtr.Zero, "Wystąpił błąd: " + "kwadraty", "Błąd", MB_OK);
+            //MessageBox(IntPtr.Zero, "Wystąpił błąd: " + "kwadraty", "Błąd", MB_OK);
+            //MessageBox(IntPtr.Zero, "Wystąpił błąd: " + "kwadraty", "Błąd", MB_OK);
 
+            IntPtr hWnd = IntPtr.Zero; // Ustawienie uchwytu okna nadrzędnego na zero oznacza, że okno będzie miało domyślny układ
+
+            // Wyświetlanie kilku komunikatów jednocześnie
+            MessageBox(hWnd, "Wiadomość 1", "Informacja", MB_OK | MB_ICONINFORMATION);
+            MessageBox(hWnd, "Wiadomość 2", "Informacja", MB_OK | MB_ICONINFORMATION);
+            MessageBox(hWnd, "Wiadomość 3", "Informacja", MB_OK | MB_ICONINFORMATION);
+
+            Console.ReadLine(); // Czekaj na naciśnięcie klawisza Enter przed zakończeniem programu
         }
     }
 }

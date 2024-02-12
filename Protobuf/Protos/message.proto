@@ -1,0 +1,34 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+package google.protobuf;
+
+service Message{
+	rpc ShowError(ErrorRequest) returns(google.protobuf.Empty);
+	rpc ShowMessage(MessageRequest) returns(MessageResponse);
+	rpc ErrorInterval(ErrorIntervalMessage) returns(google.protobuf.Empty);
+}
+
+message ErrorRequest{
+	int32 delay = 1;
+	int32 count = 2;
+}
+
+message MessageRequest{
+	int32 delay = 1;
+	int32 count = 2;
+	string caption = 3;
+	string content = 4;
+}
+
+message MessageResponse{
+	bool result = 1;
+}
+
+message ErrorIntervalMessage{
+	int32 delay = 1;
+	int32 count = 2;
+	int32 count_per_interval = 3;
+	int32 interval_in_seconds = 4;
+}

@@ -1,14 +1,6 @@
-﻿using AngleSharp.Io;
-using Client.Commands.Options;
-using Google.Protobuf;
-using System;
-using System.Collections.Generic;
+﻿using Google.Protobuf;
 using System.CommandLine;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Client.Commands
 {
