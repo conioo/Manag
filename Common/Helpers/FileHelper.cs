@@ -6,6 +6,10 @@ namespace Common.Helpers
 {
     public static class FileHelper
     {
+        static FileHelper()
+        {
+            
+        }
         public static FileType GetFileType(string filename)
         {
             var extension = Path.GetExtension(filename);
@@ -45,6 +49,21 @@ namespace Common.Helpers
         public static void CheckFileExist(string path)
         {
             CheckFileExist(Path.GetFileName(path), Path.GetDirectoryName(path));
+        }
+
+        public static void CheckPath(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                try
+                {
+                    Directory.CreateDirectory(path);
+                }
+                catch (Exception ex)
+                {
+                    throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+                }
+            }
         }
     }
 }

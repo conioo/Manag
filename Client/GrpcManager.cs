@@ -5,6 +5,7 @@ using static Google.Protobuf.WindowsSettings;
 using static Google.Protobuf.Process;
 using static Google.Protobuf.Audio;
 using static Google.Protobuf.Message;
+using static Google.Protobuf.Camera;
 
 
 namespace Client
@@ -113,6 +114,23 @@ namespace Client
             }
 
             private set { _messageClient = value; }
+        }
+
+        private CameraClient? _cameraClient;
+
+        internal CameraClient CameraClient
+        {
+            get
+            {
+                if (_cameraClient == null)
+                {
+                    _cameraClient = new CameraClient(_channel);
+                }
+
+                return _cameraClient;
+            }
+
+            private set { _cameraClient = value; }
         }
 
         internal GrpcManager(string address)

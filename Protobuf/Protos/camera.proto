@@ -1,0 +1,30 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+package google.protobuf;
+
+service Camera{
+	rpc Photo(PhotoRequest) returns(PhotoResponse);
+	rpc Video(VideoRequest) returns(VideoResponse);
+}
+
+message PhotoRequest{
+	string name = 1;
+	Int32Value delay = 2;
+	bool setWallpaper = 3;
+}
+
+message PhotoResponse{
+	bytes content = 1;
+}
+
+message VideoRequest{
+	string name = 1;
+	Int32Value delay = 2;
+	int32 time = 3;
+}
+
+message VideoResponse{
+
+}

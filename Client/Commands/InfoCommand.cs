@@ -1,4 +1,5 @@
-﻿using Google.Protobuf;
+﻿using Client.Helpers;
+using Google.Protobuf;
 using System.CommandLine;
 using System.Diagnostics;
 
@@ -45,16 +46,7 @@ namespace Client.Commands
 
                 if(download is true)
                 {
-                    byte[] content = response.Content.ToByteArray();
-
-                    var path = Path.Combine(Directory.GetCurrentDirectory(), request.Filename);
-
-                    File.WriteAllBytes(path, content);
-
-                    var processInfo = new ProcessStartInfo(path);
-                    processInfo.UseShellExecute = true;
-
-                    System.Diagnostics.Process.Start(processInfo);
+                    FileHelper.SaveFile(response.Content, request.Filename);
                 }
 
             }, nameOption, downloadOption);

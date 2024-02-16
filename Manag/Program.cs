@@ -1,4 +1,6 @@
 using Common.Configuration;
+using Common.Interfaces;
+using Common.Services;
 using Manag.Services;
 using Server.Services;
 
@@ -23,7 +25,7 @@ namespace Manag
             // Add services to the container.
             builder.Configuration.AddJsonFile("C:\\Users\\posce\\Documents\\Manag\\Common\\Configuration\\common.json");
             builder.Services.AddOptions<ApplicationOptions>().Bind(builder.Configuration.GetSection("AppSettings"));
-
+            builder.Services.AddSingleton<IFileService, FileService>();
             builder.Services.AddGrpc(options =>
             {
                 options.MaxReceiveMessageSize = null;
@@ -40,6 +42,7 @@ namespace Manag
             app.MapGrpcService<ProcessService>();
             app.MapGrpcService<AudioService>();
             app.MapGrpcService<MessageService>();
+            app.MapGrpcService<CameraService>();
 
             app.Run();
         }

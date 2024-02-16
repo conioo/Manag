@@ -50,6 +50,7 @@ namespace Server
             app.MapGrpcService<ProcessService>();
             app.MapGrpcService<AudioService>();
             app.MapGrpcService<MessageService>();
+            app.MapGrpcService<CameraService>();
 
             app.UseSerilogRequestLogging();
 

@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AForge.Video.DirectShow" Version="2.2.5" />
     <PackageReference Include="Grpc.HealthCheck" Version="2.60.0" />
     <PackageReference Include="Grpc.Net.Client" Version="2.60.0" />
     <PackageReference Include="NAudio" Version="2.2.1" />
