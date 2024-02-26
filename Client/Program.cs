@@ -30,8 +30,8 @@ namespace Client
             {
                 Console.WriteLine("enter ip address:");
                 Thread.Sleep(1200);
-                var address = "localhost";
-                //var address = Console.ReadLine();
+                //var address = "localhost";
+                var address = Console.ReadLine();
 
                 if (string.IsNullOrEmpty(address))
                 {

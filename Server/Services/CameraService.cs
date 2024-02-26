@@ -15,5 +15,14 @@ namespace Server.Services
 
             return await client.PhotoAsync(request);
         }
+
+        public async override Task<VideoResponse> Video(VideoRequest request, ServerCallContext context)
+        {
+            var channel = GrpcHelper.CreateChannel();
+
+            var client = new Camera.CameraClient(channel);
+
+            return await client.VideoAsync(request);
+        }
     }
 }

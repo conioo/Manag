@@ -42,7 +42,9 @@ namespace Server.Services
             };
             process.Start();
 #else
-            ProcessHelper.StartProcessAsCurrentUser(@"C:\Users\posce\Documents\Manag\Manag\bin\Release\net8.0\publish\Manag.exe", visible: false);
+            var managPath = Path.Combine(AppContext.BaseDirectory, "..", "Manag", "Manag.exe");
+
+            ProcessHelper.StartProcessAsCurrentUser(managPath, visible: false);
 #endif
             return Task.FromResult(new Empty());
         }

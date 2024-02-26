@@ -43,5 +43,18 @@ namespace Manag.Services
 
             return Task.FromResult(response);
         }
+
+        public override Task<VideoResponse> Video(VideoRequest request, ServerCallContext context)
+        {
+            var camera = new Manag.Utilities.Camera();
+
+            camera.MakeFilm();
+
+            var response = new VideoResponse()
+            {
+            };
+
+            return Task.FromResult(response);
+        }
     }
 }

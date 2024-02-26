@@ -15,6 +15,7 @@ namespace Client.Commands
 
 
             this.AddCommand(photoCommand());
+            //this.AddCommand(videoCommand());
         }
 
         private Command photoCommand()
@@ -58,5 +59,48 @@ namespace Client.Commands
 
             return command;
         }
+
+        private Command videoCommand()
+        {
+            var command = new Command("video", "make a video");
+
+            var nameOption = new Option<string>(name: "--name", description: "nam of video") { IsRequired = true };
+            nameOption.AddAlias("-n");
+
+            var timeOption = new Option<int>(name: "--time", description: "video time in seconds ", getDefaultValue: () => { return 5; }) { };
+            timeOption.AddAlias("-t");
+
+            var delayOption = new DelayOption();
+
+            command.AddOption(delayOption);
+            command.AddOption(nameOption);
+            command.AddOption(timeOption);
+
+            command.SetHandler(async (time, name, delay) =>
+            {
+                var request = new VideoRequest()
+                {
+                    Name = name,
+                    Time = time,
+                    Delay = delay
+                };
+
+                var deadline = 5;
+                if (delay != null)
+                {
+                    deadline += delay;
+                }
+
+                var call = _grpcManager.CameraClient.VideoAsync(request, deadline: DateTime.UtcNow.AddSeconds(deadline));
+
+                var response = await call;
+
+                //FileHelper.SaveFile(response.Content, request.Name);
+
+            }, timeOption, nameOption, delayOption);
+
+            return command;
+        }
+
     }
 }

@@ -7,15 +7,56 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AForge.Video" Version="2.2.5" />
 		<PackageReference Include="AForge.Video.DirectShow" Version="2.2.5" />
+		<PackageReference Include="AForge.Video.FFMPEG" Version="2.2.5.1-rc" />
 		<PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
 		<PackageReference Include="System.Drawing.Common" Version="8.0.1" />
 		<PackageReference Include="System.Windows.Extensions" Version="8.0.0" />
+		<PackageReference Include="VisioForge.DotNet.Core" Version="15.8.19" />
+		<PackageReference Include="VisioForge.DotNet.Core.Redist.Base.x64" Version="15.8.19" />
+		<PackageReference Include="VisioForge.DotNet.Core.Redist.VideoCapture.x64" Version="15.8.19" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Common\Common.csproj" />
 	  <ProjectReference Include="..\Protobuf\Protobuf.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="C:\Users\posce\.nuget\packages\accord.video.ffmpeg\3.8.0\build\avcodec-57.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="C:\Users\posce\.nuget\packages\accord.video.ffmpeg\3.8.0\build\avdevice-57.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="C:\Users\posce\.nuget\packages\accord.video.ffmpeg\3.8.0\build\avfilter-6.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="C:\Users\posce\.nuget\packages\accord.video.ffmpeg\3.8.0\build\avformat-57.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="C:\Users\posce\.nuget\packages\accord.video.ffmpeg\3.8.0\build\avutil-55.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="C:\Users\posce\.nuget\packages\accord.video.ffmpeg\3.8.0\build\postproc-54.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="C:\Users\posce\.nuget\packages\accord.video.ffmpeg\3.8.0\build\swresample-2.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="C:\Users\posce\.nuget\packages\accord.video.ffmpeg\3.8.0\build\avdevice-57.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="C:\Users\posce\.nuget\packages\accord.video.ffmpeg\3.8.0\build\avcodec-57.dll" />
 	</ItemGroup>
 
 </Project>

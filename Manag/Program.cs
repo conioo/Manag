@@ -1,3 +1,4 @@
+using CliWrap;
 using Common.Configuration;
 using Common.Interfaces;
 using Common.Services;
@@ -12,6 +13,28 @@ namespace Manag
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            if (args is { Length: 1 })
+            {
+                try
+                {
+                    string executablePath =
+                        Path.Combine(AppContext.BaseDirectory, "Manag.exe");
+
+                    if (args[0] is "/Install")
+                    {
+                    }
+                    else if (args[0] is "/Uninstall")
+                    {
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+
+                return;
+            }
+
             //builder.WebHost.ConfigureKestrel(serverOptions =>
             //{
             //    serverOptions.ListenNamedPipe("square2", listenOptions =>
@@ -23,7 +46,16 @@ namespace Manag
             //});
 
             // Add services to the container.
-            builder.Configuration.AddJsonFile("C:\\Users\\posce\\Documents\\Manag\\Common\\Configuration\\common.json");
+#if DEBUG
+            var relativePath = @"./../Common/Configuration/common.json";
+            var absolutePath = Path.GetFullPath(relativePath);
+
+            builder.Configuration.AddJsonFile(absolutePath);
+#else
+            var absolutePath = Path.Combine(AppContext.BaseDirectory, "..", "common.json");
+            builder.Configuration.AddJsonFile(absolutePath);
+#endif
+
             builder.Services.AddOptions<ApplicationOptions>().Bind(builder.Configuration.GetSection("AppSettings"));
             builder.Services.AddSingleton<IFileService, FileService>();
             builder.Services.AddGrpc(options =>
